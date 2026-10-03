@@ -130,7 +130,7 @@ def fig_liquidity(universe: pd.DataFrame) -> None:
     ax.barh(u["ticker"] + " " + u["wiki_title"].str.replace("_", " "),
             u["median_dollar_volume_2014_15"] / 1e6,
             color=np.where(u["included"], BLUE, "lightgray"))
-    ax.axvline(5, color=TERRACOTTA, ls="--", lw=0.8, label="\\$5M threshold")
+    ax.axvline(5, color="black", ls="--", lw=0.8, label="\\$5M threshold")
     ax.set_xscale("log"); ax.set_xlabel("median daily dollar volume, Jul 2014 $-$ Jun 2015, \\$M (log)")
     ax.tick_params(axis="y", labelsize=6); ax.legend(frameon=False, loc="lower right")
     fig.tight_layout(); save(fig, "fig_liquidity")
