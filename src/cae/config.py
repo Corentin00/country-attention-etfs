@@ -56,6 +56,28 @@ CANDIDATES: dict[str, tuple[str, bool]] = {
 
 USD_ETF = "UUP"
 
+# R3: "Economy of <country>" pages. Titles that need "the" are listed explicitly.
+ECONOMY_TITLE_OVERRIDES: dict[str, str] = {
+    "United_Kingdom": "Economy_of_the_United_Kingdom",
+    "United_States": "Economy_of_the_United_States",
+    "Netherlands": "Economy_of_the_Netherlands",
+    "Philippines": "Economy_of_the_Philippines",
+    "United_Arab_Emirates": "Economy_of_the_United_Arab_Emirates",
+    "Republic_of_Ireland": "Economy_of_the_Republic_of_Ireland",
+}
+
+
+def economy_title(country_title: str) -> str:
+    return ECONOMY_TITLE_OVERRIDES.get(country_title, f"Economy_of_{country_title}")
+
+
+# R8: global fear pages.
+FEAR_TITLES: tuple[str, ...] = ("Recession", "Stock_market_crash", "Inflation", "Bank_run")
+
+# Section 2.1.
+VIEWS_START = date(2015, 7, 1)
+VIEWS_END = date(2026, 9, 30)
+
 PRICE_START = date(2014, 7, 1)
 PRICE_END = date(2026, 10, 2)
 
