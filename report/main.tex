@@ -18,6 +18,9 @@
 \setlist{itemsep=1pt,topsep=3pt}
 \setlength{\parskip}{3pt}
 \setlength{\parindent}{0pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
 
 \input{numbers}
 \newcommand{\repourl}{https://github.com/Corentin00/country-attention-etfs}
@@ -202,8 +205,39 @@ countries. Full numbers in Table~\ref{tab:robustness}.}
 
 % =====================================================================================
 \section{Would I trade it?}
-\todo{To be written: decision rule result (Table~\ref{tab:decision} in the appendix can be moved
-here), turnover and costs as the structural obstacle, what I would try next, reflection.}
+No. Before seeing any result I fixed four conditions that must all hold before trading the signal
+with real capital (Table~\ref{tab:decision}); only one passes, the sign being the same in two of the
+three sub-periods.
+
+\textbf{Costs make it structurally untradable.} Attention spikes fade within days, so about
+\TurnoverPerSide\% of each side is replaced every week (a total weight change of 1.69 out of a
+maximum of 2), an average holding period of about 1.2 weeks. At 10\,bp per trade in developed and
+20\,bp in emerging markets this costs \CostAnn\% per year: even a correctly signed signal would need
+more than \CostAnn\% of gross return per year just to break even, while the whole equal-weighted
+universe earned about 7\% per year. Net of costs the strategy loses \NetLoss\% per year
+($t=\Nett$, Table~\ref{tab:main}).
+
+\textbf{Before costs there is nothing to trade either.} The gross spread is insignificant
+($t=\LSt$) and indistinguishable from noise: \PlaceboPct\% of random placebo signals do as well. It
+is fragile, since its sign flips with \emph{Economy of} pages and in 2020--2021 and it weakens when
+trades are delayed by one day. There is no hidden alpha (\AlphaAnn\% per year, $t=\Alphat$, with the
+four factors explaining only \AlphaRsq\% of the variance), and no single country drives the result
+($t$ between \LOOtMin{} and \LOOtMax{} when any one country is dropped).
+
+\textbf{Comparison with the literature.} \refto{barber2008}{Barber \& Odean (2008)} show that
+individual investors are net buyers of attention-grabbing stocks, and
+\refto{da2011}{Da, Engelberg \& Gao (2011)} find that a jump in Google searches for a stock predicts
+higher prices over the next two weeks followed by a reversal, strongest where retail trading is
+high. At the country level I find neither the short-run rise nor the reversal. Three differences
+plausibly explain this: country ETFs are large markets dominated by institutions, so retail buying
+moves them little; the ETF creation and redemption mechanism ties prices to the underlying stocks,
+which absorbs price pressure; and reading a country's Wikipedia page signals general curiosity
+(news, travel, sport) far more than intent to buy, unlike searching for a ticker.
+
+\textbf{Next steps.} Two extensions follow from these results: measuring attention on local-language
+Wikipedia, which is closer to the domestic investors who trade these markets, and combining attention
+with the short-term reversal effect, which is significantly positive in this universe
+($t=\PremREVt$). Both would need a new pre-registered specification.
 
 % =====================================================================================
 \clearpage
