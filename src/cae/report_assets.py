@@ -29,8 +29,9 @@ RESULTS = REPORT / "results"
 FIGURES = REPORT / "figures"
 TABLES = REPORT / "tables"
 FULL_WIDTH = 6.7  # inches, A4 with 2 cm margins
-# Muted palette: navy for the main series, terracotta for the contrast series.
-NAVY = "#23395b"
+# Muted palette, chosen to stay distinct from black: steel blue for the main series,
+# terracotta for the contrast series.
+BLUE = "#4f7cac"
 TERRACOTTA = "#b5523b"
 
 mpl.rcParams.update({
@@ -80,7 +81,7 @@ def fig_robustness(rob: pd.DataFrame) -> None:
     se = ann / r["nw_t"].to_numpy()
     y = np.arange(len(r))
     fig, ax = plt.subplots(figsize=(FULL_WIDTH * 0.62, 2.2))
-    colors = ["black" if lbl.startswith("MAIN") else NAVY for lbl in r.index]
+    colors = [TERRACOTTA if lbl.startswith("MAIN") else BLUE for lbl in r.index]
     ax.errorbar(ann, y, xerr=1.96 * se, fmt="none", ecolor="gray", lw=0.7, capsize=1.5)
     ax.scatter(ann, y, c=colors, s=10, zorder=3)
     ax.axvline(0, color="black", lw=0.5)
@@ -94,9 +95,9 @@ def fig_signal_example(panel: pd.DataFrame) -> None:
     baseline = uk["views"] / np.exp(uk["asv8"])
     fig, (a, b) = plt.subplots(1, 2, figsize=(FULL_WIDTH, 2.0))
     a.plot(uk.index, uk["views"] / 1e3, "o-", ms=2, lw=0.8, color="black", label="weekly views $V$")
-    a.plot(uk.index, baseline / 1e3, lw=0.8, color=NAVY, label="median of previous 8 weeks")
+    a.plot(uk.index, baseline / 1e3, lw=1.0, ls="--", color=BLUE, label="median of previous 8 weeks")
     a.set_ylabel("thousand views"); a.set_title("(a) United Kingdom page, 2016"); a.legend(frameon=False)
-    b.bar(uk.index, uk["asv8"], width=5, color=NAVY)
+    b.bar(uk.index, uk["asv8"], width=5, color=BLUE)
     b.axhline(0, color="black", lw=0.4)
     b.set_title("(b) ASV = ln($V$) $-$ ln(median)"); b.set_ylabel("ASV")
     for ax in (a, b):
@@ -106,7 +107,7 @@ def fig_signal_example(panel: pd.DataFrame) -> None:
 
 def fig_terciles(terciles: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(FULL_WIDTH, 2.2))
-    for name, color in [("High", TERRACOTTA), ("Middle", "gray"), ("Low", NAVY)]:
+    for name, color in [("High", TERRACOTTA), ("Middle", "gray"), ("Low", BLUE)]:
         (1 + terciles[name]).cumprod().plot(ax=ax, lw=0.9, color=color, label=f"{name} attention")
     ax.set_xlabel(""); ax.set_ylabel("growth of \\$1"); ax.legend(frameon=False)
     fig.tight_layout(); save(fig, "fig_terciles")
@@ -128,7 +129,7 @@ def fig_liquidity(universe: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(FULL_WIDTH * 0.75, 5.0))
     ax.barh(u["ticker"] + " " + u["wiki_title"].str.replace("_", " "),
             u["median_dollar_volume_2014_15"] / 1e6,
-            color=np.where(u["included"], NAVY, "lightgray"))
+            color=np.where(u["included"], BLUE, "lightgray"))
     ax.axvline(5, color=TERRACOTTA, ls="--", lw=0.8, label="\\$5M threshold")
     ax.set_xscale("log"); ax.set_xlabel("median daily dollar volume, Jul 2014 $-$ Jun 2015, \\$M (log)")
     ax.tick_params(axis="y", labelsize=6); ax.legend(frameon=False, loc="lower right")
