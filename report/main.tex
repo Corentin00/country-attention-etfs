@@ -31,7 +31,7 @@
 \input{numbers}
 \newcommand{\repourl}{https://github.com/Corentin00/country-attention-etfs}
 \newcommand{\todo}[1]{\textcolor{red}{[#1]}}
-\newcommand{\refto}[2]{\hyperlink{ref:#1}{#2}}
+\DeclareRobustCommand{\refto}[2]{\hyperlink{ref:#1}{#2}}
 
 \title{\vspace{-1.5cm}\textbf{Does the World's Attention Move Country Markets?}\\[2pt]
 \large Wikipedia page views and the cross-section of country ETF returns}
@@ -156,7 +156,7 @@ downward. Figure~\ref{fig:main}a shows that most of the gross loss occurs in 202
 
 \begin{table}[h]
 \centering\small
-\caption{One-week holding, weekly rebalancing, September 2015--September 2026. Newey--West
+\caption{One-week holding, weekly rebalancing, September 2015--September 2026. \refto{newey1987}{Newey--West (1987)}
 $t$-statistics with four lags. Net returns deduct 10\,bp (developed) or 20\,bp (emerging) per
 one-way trade. Vol: annualized volatility; Max DD: maximum drawdown; Hit: share of positive weeks.}
 \label{tab:main}
@@ -177,7 +177,7 @@ case sorting on attention would only repackage known return patterns such as sho
 momentum. I check this in two ways (Table~\ref{tab:newinfo} in the appendix). First, each week I
 regress next-week returns across countries on the attention rank, alone and then together with past
 returns at three horizons, volatility and the baseline attention level, and average the weekly
-coefficients (Fama--MacBeth). Alone, the attention coefficient is \FMasv\% per standard deviation
+coefficients (\refto{fama1973}{Fama \& MacBeth, 1973}). Alone, the attention coefficient is \FMasv\% per standard deviation
 ($t=\FMasvt$); with the controls it shrinks to \FMasvc\% ($t=\FMasvct$), so the weak effect picked
 up by the sort mostly reflects past price moves. Second, I regress the weekly High-minus-Low return
 on four factors built from the same \NEtfs{} ETFs: the market, momentum, short-term reversal and the
@@ -263,26 +263,26 @@ with the short-term reversal effect, which is significantly positive in this uni
 \begin{itemize}[leftmargin=*,label={}]
   \item \hypertarget{ref:barber2008}{}Barber, B.\,M., and T.\ Odean (2008). All that glitters: the effect of
         attention and news on the buying behavior of individual and institutional investors.
-        \textit{Review of Financial Studies} 21(2), 785--818. \url{https://doi.org/10.1093/rfs/hhm079}
+        \textit{Review of Financial Studies} 21(2), 785--818. \newline\url{https://doi.org/10.1093/rfs/hhm079}
   \item \hypertarget{ref:da2011}{}Da, Z., J.\ Engelberg, and P.\ Gao (2011). In search of attention.
-        \textit{Journal of Finance} 66(5), 1461--1499. \url{https://doi.org/10.1111/j.1540-6261.2011.01679.x}
+        \textit{Journal of Finance} 66(5), 1461--1499. \newline\url{https://doi.org/10.1111/j.1540-6261.2011.01679.x}
   \item \hypertarget{ref:fama1973}{}Fama, E.\,F., and J.\,D.\ MacBeth (1973). Risk, return, and equilibrium:
         empirical tests. \textit{Journal of Political Economy} 81(3), 607--636.
-        \url{https://doi.org/10.1086/260061}
+        \newline\url{https://doi.org/10.1086/260061}
   \item \hypertarget{ref:hou2020}{}Hou, K., C.\ Xue, and L.\ Zhang (2020). Replicating anomalies.
-        \textit{Review of Financial Studies} 33(5), 2019--2133. \url{https://doi.org/10.1093/rfs/hhy131}
+        \textit{Review of Financial Studies} 33(5), 2019--2133. \newline\url{https://doi.org/10.1093/rfs/hhy131}
   \item \hypertarget{ref:jegadeesh1993}{}Jegadeesh, N., and S.\ Titman (1993). Returns to buying winners
         and selling losers: implications for stock market efficiency. \textit{Journal of Finance}
-        48(1), 65--91. \url{https://doi.org/10.1111/j.1540-6261.1993.tb04702.x}
+        48(1), 65--91. \newline\url{https://doi.org/10.1111/j.1540-6261.1993.tb04702.x}
   \item \hypertarget{ref:moat2013}{}Moat, H.\,S., C.\ Curme, A.\ Avakian, D.\,Y.\ Kenett, H.\,E.\ Stanley, and
         T.\ Preis (2013). Quantifying Wikipedia usage patterns before stock market moves.
-        \textit{Scientific Reports} 3, 1801. \url{https://doi.org/10.1038/srep01801}
+        \textit{Scientific Reports} 3, 1801. \newline\url{https://doi.org/10.1038/srep01801}
   \item \hypertarget{ref:newey1987}{}Newey, W.\,K., and K.\,D.\ West (1987). A simple, positive semi-definite,
         heteroskedasticity and autocorrelation consistent covariance matrix. \textit{Econometrica}
-        55(3), 703--708. \url{https://doi.org/10.2307/1913610}
+        55(3), 703--708. \newline\url{https://doi.org/10.2307/1913610}
   \item \hypertarget{ref:novymarx2016}{}Novy-Marx, R., and M.\ Velikov (2016). A taxonomy of anomalies and
         their trading costs. \textit{Review of Financial Studies} 29(1), 104--147.
-        \url{https://doi.org/10.1093/rfs/hhv063}
+        \newline\url{https://doi.org/10.1093/rfs/hhv063}
 \end{itemize}
 \normalsize
 
@@ -341,7 +341,7 @@ longer has its price history, so its volume is unknown.}
         erased by a cost of only \BreakEvenBps\,bp per trade, in either direction. The verdict
         therefore does not depend on the exact figure.
   \item The horizon profile reports both event-time returns (week $k$ after formation) and
-        overlapping Jegadeesh--Titman portfolios held $h$ weeks, with Newey--West lags $\max(4,h)$.
+        overlapping \refto{jegadeesh1993}{Jegadeesh--Titman (1993)} portfolios held $h$ weeks, with Newey--West lags $\max(4,h)$.
 \end{itemize}
 \textbf{Limitations.}
 \begin{itemize}[leftmargin=*]

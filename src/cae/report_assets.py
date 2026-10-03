@@ -238,7 +238,7 @@ def tab_decision(decision: pd.DataFrame) -> None:
              f"{r.value.replace('t = -', 't = $-$')} & {'pass' if r._3 else 'fail'} \\\\"
              for r in decision.itertuples()]
     write("tab_decision", "\n".join([
-        "\\begin{tabular}{llc}", "\\toprule", "Condition (frozen spec, section 11) & Value & Result \\\\",
+        "\\begin{tabular}{p{0.55\\textwidth}lc}", "\\toprule", "Condition (frozen spec, section 11) & Value & Result \\\\",
         "\\midrule", *lines, "\\bottomrule", "\\end{tabular}",
     ]))
 
