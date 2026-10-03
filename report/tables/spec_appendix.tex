@@ -1,0 +1,224 @@
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{Header}}}]
+SUBJECT: [HFC] Frozen research specification - Country attention signal
+         (fixed 2026-10-03, before any result was computed)
+
+COUNTRY ATTENTION AND COUNTRY ETF RETURNS - RESEARCH SPECIFICATION
+Track: Systematic (Hedge Fund Club St. Gallen assignment)
+Status: FROZEN on Saturday 2026-10-03, before any return was computed.
+Any later deviation will be reported as such in the submission.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{0. RESEARCH QUESTION}}}]
+Does abnormal global English-language attention to a country, measured
+by English Wikipedia page views, predict the relative returns of that
+country's equity ETF over the following weeks?
+
+"Relative" = relative to the other countries in the universe
+(long high-attention countries, short low-attention countries).
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{1. HYPOTHESES}}}]
+H0 Efficient markets: attention is public and already in prices.
+   -> Long-short return (LS) is zero at all horizons.
+
+H1 Price pressure (Barber & Odean 2008; Da, Engelberg & Gao 2011):
+   attention attracts uninformed buyers, pushing prices above fair
+   value temporarily.
+   -> LS positive over weeks 1-2, then reverses over weeks 3-12.
+
+H2 Risk premium: attention spikes flag crises (war, election, default);
+   investors demand compensation for the higher perceived risk, so
+   prices drop and expected returns rise.
+   -> LS positive and persistent, no reversal.
+
+H1 and H2 can coexist; the horizon profile (section 7.4) shows which
+dominates. The main test is two-sided: no sign is assumed in advance.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{2. DATA}}}]
+2.1 Page views: Wikimedia REST API, per-article, daily.
+    project = en.wikipedia, access = all-access, agent = user
+    (excludes identified bots and spiders).
+    Period: 2015-07-01 to 2026-09-30 (API starts 2015-07-01).
+    Throttle to about 1 request/second, retry on HTTP 429.
+
+2.2 Prices: Yahoo Finance via yfinance, daily adjusted close
+    (dividends and splits included), 2014-07-01 to 2026-10-02.
+    Daily volume for the liquidity filter.
+
+2.3 Risk-free rate: Ken French Data Library, daily RF, compounded
+    to weekly.
+
+2.4 US dollar: UUP (Invesco DB US Dollar Index ETF), Yahoo, weekly
+    return, used as a control factor.
+
+Continuity check already done (2026-10-03): all candidate country
+pages return 135 monthly observations 2015-07 to 2026-09 with no gap
+and no rename break (minimum month >= 0.44 x median for every page).
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{3. UNIVERSE (rules fixed before seeing results)}}}]
+3.1 Start from all iShares MSCI single-country ETFs, US included
+    (one issuer = one index methodology).
+3.2 Keep ETFs with inception before 2015-07-01.
+3.3 Keep ETFs with median daily dollar volume >= USD 5 million over
+    2014-07-01 to 2015-06-30 (pre-sample, so no look-ahead).
+3.4 Russia (ERUS): included until its last available price (trading
+    halted 2022). If Yahoo no longer has its history, it is excluded
+    and this is reported as a survivorship limitation.
+3.5 Saudi Arabia (KSA) is out by rule 3.2 (launched Sept 2015).
+
+Candidate list (ticker - Wikipedia title), before filters 3.2-3.3:
+  EWA  Australia            EWO  Austria
+  EWK  Belgium              EWZ  Brazil
+  EWC  Canada               ECH  Chile
+  MCHI China                EDEN Denmark
+  EFNL Finland              EWQ  France
+  EWG  Germany              EWH  Hong_Kong
+  INDA India                EIDO Indonesia
+  EIRL Republic_of_Ireland  EIS  Israel
+  EWI  Italy                EWJ  Japan
+  EWM  Malaysia             EWW  Mexico
+  EWN  Netherlands          ENZL New_Zealand
+  ENOR Norway               EPU  Peru
+  EPHE Philippines          EPOL Poland
+  QAT  Qatar                ERUS Russia
+  EWS  Singapore            EZA  South_Africa
+  EWY  South_Korea          EWP  Spain
+  EWD  Sweden               EWL  Switzerland
+  EWT  Taiwan               THD  Thailand
+  TUR  Turkey               UAE  United_Arab_Emirates
+  EWU  United_Kingdom       EUSA United_States
+
+Note: "Ireland" on English Wikipedia is the island; the country page
+is "Republic_of_Ireland".
+
+Market classification for costs (MSCI, as of 2015-07-01):
+  Emerging: Brazil, Chile, China, India, Indonesia, Malaysia, Mexico,
+  Peru, Philippines, Poland, Qatar, Russia, South Africa, South Korea,
+  Taiwan, Thailand, Turkey, UAE. All others: Developed.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{4. SIGNAL}}}]
+4.1 Week w = Monday 00:00 to Sunday 24:00 UTC.
+4.2 V(i,w) = sum of the 7 daily views of country i's page in week w.
+4.3 Abnormal attention:
+      ASV(i,w) = ln V(i,w) - ln median[ V(i,w-1), ..., V(i,w-8) ]
+    Scale-free (big and small countries comparable) and robust to a
+    one-off spike in the reference window.
+4.4 A country needs all 9 weeks (w-8..w) of views to be ranked in
+    week w; otherwise it is skipped that week.
+4.5 Portfolios use only the cross-sectional rank of ASV (outliers such
+    as Israel 2023 or Qatar World Cup 2022 cannot dominate).
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{5. TIMING}}}]
+5.1 Signal uses views up to Sunday 24:00 UTC of week w.
+5.2 Rebalance at the adjusted close of the first US trading day of
+    week w+1 (normally Monday; Tuesday after a US holiday).
+5.3 Hold until the next rebalance close (one week later).
+5.4 No look-ahead: all views used are dated before the trade.
+    Wikimedia publishes a day's data some hours after midnight UTC,
+    before the Monday US close; R6 (one-day delay) covers any lag.
+5.5 Sample: first signal week = first week with 8 prior full weeks
+    (Monday 2015-08-31 to Sunday 2015-09-06; first trade Tuesday
+    2015-09-08, after Labor Day). Last signal week = 2026-09-14 to
+    2026-09-20 (last full holding week ends Monday 2026-09-28).
+5.6 If an ETF has no price after some date (e.g. ERUS 2022), the
+    position is closed at the last available price and the ETF leaves
+    the universe.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{6. PORTFOLIOS}}}]
+6.1 Each week, sort the N eligible countries by ASV.
+    High = top floor(N/3), Low = bottom floor(N/3), Middle = rest.
+6.2 Equal weights inside each tercile.
+6.3 LS(w+1) = mean return of High - mean return of Low
+    (P&L per dollar on each side; market moves cancel out).
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{7. MAIN TESTS}}}]
+7.1 Mean weekly LS return, Newey-West t-statistic (4 lags), two-sided,
+    5% level. H0: mean LS = 0.
+7.2 Annualized Sharpe (mean / std x sqrt(52)), max drawdown of
+    cumulative LS, hit rate (% of weeks with LS > 0).
+7.3 Mean weekly return of High, Middle, Low separately (check that
+    they are ordered).
+7.4 Horizon profile: overlapping portfolios held h = 1, 2, ..., 12
+    weeks (Jegadeesh-Titman: a new cohort each week, each cohort 1/h
+    of capital). Plot cumulative LS by h.
+    Reversal after weeks 1-2 -> H1; persistent -> H2.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{8. IS IT NEW INFORMATION?}}}]
+8.1 Fama-MacBeth: each week, cross-sectional regression of next-week
+    return on (all variables z-scored cross-sectionally that week):
+      ASV rank
+      R1   = return of the last week (to the rebalance close)
+      R4   = return of weeks -4 to -2
+      MOM  = return of weeks -52 to -5
+      VOL  = std of daily returns over the last 26 weeks
+      LVL  = ln median V(i, w-1..w-8)   (baseline attention level)
+    Report time-series mean of each coefficient, Newey-West t (4 lags).
+
+8.2 Alpha: time-series regression of LS on four factors built from
+    the same universe, Newey-West t (4 lags):
+      MKT = equal-weighted universe return - RF
+      MOM = top tercile minus bottom tercile by MOM (weeks -52..-5)
+      REV = bottom tercile minus top tercile by R1 (last week losers
+            minus winners)
+      USD = UUP weekly return
+    Report alpha (weekly and annualized) and its t-statistic.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{9. TRANSACTION COSTS}}}]
+9.1 One-way cost: 10 bps for Developed, 20 bps for Emerging ETFs.
+9.2 Weekly cost = sum over both legs of |weight change| x cost of
+    that ETF. Net LS = gross LS - cost.
+9.3 Report mean weekly turnover, net mean LS, net Newey-West t, net
+    Sharpe, and the break-even one-way cost
+    (= gross mean LS / mean total turnover).
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{10. ROBUSTNESS (fixed list, no test added after seeing results)}}}]
+R1  Reference window of 4 or 12 weeks instead of 8.
+R2  Quintiles instead of terciles; rank-weighted portfolio.
+R3  "Economy_of_<country>" pages instead of country pages.
+R4  Sub-periods: 2015-09 to 2019-12, 2020-01 to 2021-12,
+    2022-01 to 2026-09.
+R5  Leave one country out (re-run once per country).
+R6  Trade one day later (second US trading day close).
+R7  Placebo: shuffle ASV across countries within each week, 1,000
+    times; empirical p-value = share of |placebo mean LS| >= |actual|.
+R8  (if time) Global fear index: mean ASV of pages "Recession",
+    "Stock_market_crash", "Inflation", "Bank_run"; compare LS in weeks
+    of high vs low global fear (split at median).
+R9  Exclude English-majority countries (US, UK, Canada, Australia,
+    New Zealand, Ireland), where readers are largely domestic.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{11. DECISION RULE: WOULD I TRADE IT WITH REAL CAPITAL?}}}]
+YES only if ALL hold:
+  a) net-of-cost Newey-West |t| > 2;
+  b) same sign in at least 2 of the 3 sub-periods (R4);
+  c) alpha on the four factors (8.2) remains significant;
+  d) break-even cost > 2 x assumed cost.
+Otherwise NO, with the failing condition(s) stated.
+\end{Verbatim}
+
+\begin{Verbatim}[fontsize=\footnotesize, frame=single, framerule=0.3pt, rulecolor=\color{black!35}, framesep=2.5mm, samepage=true, label={\textcolor{black}{\textbf{12. EXECUTABLE STRATEGY (for a colleague, no questions needed)}}}]
+ 1. Universe: the ETFs in section 3 that pass rules 3.2-3.4.
+ 2. Every Monday before the US close, download last week's (Mon-Sun
+    UTC) daily English Wikipedia views (agent=user) for each country
+    page in section 3, plus the 8 weeks before it.
+ 3. For each country: V = sum of last week's views;
+    B = median of the 8 previous weekly sums; ASV = ln(V) - ln(B).
+ 4. Rank countries by ASV. Top third = High, bottom third = Low
+    (round down; the middle is not traded).
+ 5. At the Monday close (Tuesday if Monday is a US holiday):
+    go long High and short Low, equal dollar amounts in each ETF,
+    equal total dollars on each side.
+ 6. Hold one week. At the next rebalance close, repeat steps 2-5 and
+    trade only the differences.
+ 7. If an ETF stops trading, close it at its last price and drop it.
+\end{Verbatim}

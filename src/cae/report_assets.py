@@ -243,6 +243,49 @@ def tab_decision(decision: pd.DataFrame) -> None:
     ]))
 
 
+def spec_appendix(spec_text: str) -> str:
+    """Appendix A: the frozen spec, one framed box per section, text unchanged.
+
+    The spec separates sections with a title line followed by a line of dashes; the
+    header is enclosed in lines of '='. Those decorative lines become box titles; every
+    other line is reproduced verbatim, and no box breaks across pages.
+    """
+    lines = spec_text.rstrip("\n").split("\n")
+    sections: list[tuple[str, list[str]]] = []
+    title, body = "Header", []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        if nxt.startswith("-----") and line.strip():
+            sections.append((title, body))
+            title, body = line.strip(), []
+            i += 2
+            continue
+        if not line.startswith("====="):
+            body.append(line)
+        i += 1
+    sections.append((title, body))
+
+    out = []
+    for title, body in sections:
+        while body and not body[0].strip():
+            body.pop(0)
+        while body and not body[-1].strip():
+            body.pop()
+        if not body:
+            continue
+        out.append(
+            "\\begin{Verbatim}[fontsize=\\footnotesize, frame=single, framerule=0.3pt,"
+            " rulecolor=\\color{black!35}, framesep=2.5mm, samepage=true,"
+            f" label={{\\textcolor{{black}}{{\\textbf{{{title}}}}}}}]"
+        )
+        out.extend(body)
+        out.append("\\end{Verbatim}")
+        out.append("")
+    return "\n".join(out)
+
+
 # --------------------------------------------------------------------------- numbers
 
 def numbers(values: dict[str, str]) -> None:
@@ -331,6 +374,8 @@ def main() -> None:
         "BrexitASV": f"{brexit_asv:.1f}", "BrexitRatio": f"{np.exp(brexit_asv):.0f}",
     })
     shutil.copy(ROOT / "docs" / "spec_frozen_2026-10-03.txt", REPORT / "spec_frozen.txt")
+    spec = (ROOT / "docs" / "spec_frozen_2026-10-03.txt").read_text(encoding="utf-8")
+    write("spec_appendix", spec_appendix(spec))
     print("Wrote", sorted(p.name for p in FIGURES.glob("*.pdf")), sorted(p.name for p in TABLES.glob("*.tex")))
     print((REPORT / "numbers.tex").read_text(encoding="utf-8"))
 
