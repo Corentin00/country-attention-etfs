@@ -12,6 +12,7 @@
 \usepackage{fancyvrb}
 \usepackage{xcolor}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage[colorlinks,allcolors=blue!50!black]{hyperref}
 
 \captionsetup{font=small,labelfont=bf,skip=4pt}
@@ -366,7 +367,7 @@ median baseline, and the resulting ASV.}
 
 \FloatBarrier
 \section{Additional results}\label{app:tables}
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Panel A: Fama--MacBeth regressions on cross-sectionally standardized variables
 (Newey--West $t$ in parentheses). Panel B: High-minus-Low regressed on market, momentum, reversal and
@@ -375,7 +376,7 @@ dollar factors built from the same universe.}
 \input{tables/tab_newinfo}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Robustness: all pre-specified variations (gross of costs). Placebo (R7): two-sided
 $p=\PlaceboP$.}
@@ -383,26 +384,26 @@ $p=\PlaceboP$.}
 \input{tables/tab_robustness}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Leave one country out (R5): High-minus-Low after dropping each ETF.}
 \input{tables/tab_loo}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \centering\small
 \caption{Decision rule (frozen specification, section 11).}
 \label{tab:decision}
 \input{tables/tab_decision}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_terciles.pdf}
 \caption{Cumulative gross returns of the three tercile portfolios.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/fig_placebo.pdf}
 \caption{Placebo test (R7). Each placebo signal shuffles the attention ranking randomly across
