@@ -1,5 +1,5 @@
 condition,value,pass
 a) net-of-cost NW t > 2 (profitable as specified; |t| of a loss does not count),t = -6.88,False
 b) same sign in >= 2 of 3 sub-periods,2 of 3,True
-c) alpha on four factors significant (|t| > 2),t = -1.56,False
+"c) alpha against market, momentum, reversal and dollar factors significant (|t| > 2)",t = -1.56,False
 d) break-even cost > 2 x assumed cost,n/a (gross mean negative),False

@@ -40,30 +40,32 @@
 I test whether abnormal English Wikipedia attention to a country predicts the relative weekly
 returns of its iShares MSCI ETF, using \NEtfs{} liquid country ETFs over \NWeeks{} weeks
 (2015--2026) and a specification frozen before any return was computed. High-attention
-countries underperform low-attention ones by \LSLoss\% per year, but the spread is not
-significant (Newey--West $t=\LSt$), vanishes once past returns are controlled for, is not
-explained by known factors, and is matched by \PlaceboPct\% of random placebo signals.
+countries underperform low-attention ones by \LSLoss\% per year. This spread is not significant
+(Newey--West $t=\LSt$): it vanishes once past returns are controlled for, known factors do not
+explain it, and \PlaceboPct\% of random placebo signals do as well.
 Because attention is short-lived, about \TurnoverPerSide\% of each side is replaced every week
 and the strategy loses \NetLoss\% per year after costs. I would not trade it.
 
 % =====================================================================================
 \section{Economic thesis}
-Do bursts of public attention to a country move the price of its equity ETF? I test three
+Do bursts of public attention to a country, measured by the daily views of its English Wikipedia
+page, move the price of its equity ETF? I test three
 hypotheses, which differ in the sign and the timing of the effect.
 
 \textbf{H0: attention is already in prices.} Page views are public, so professional investors can
 watch them as easily as I can; if attention predicted returns, they would already trade on it and
 arbitrage the effect away. Abnormal attention then does not predict returns.
 
-\textbf{H1: price pressure.} When a country's page draws unusual attention, inexperienced investors
-are reading about it to inform themselves before buying its ETF. Their buying pushes the ETF slightly
+\textbf{H1: price pressure.} When a country's page draws unusual attention, we can hypothesise
+that inexperienced investors are reading about it to inform themselves before buying its ETF. Their buying pushes the ETF slightly
 above fair value, so high-attention countries outperform for a week or two and then give the gain
 back \refto{barber2008}{(Barber \& Odean, 2008}; \refto{da2011}{Da, Engelberg \& Gao, 2011)}.
 
 \textbf{H2: risk premium.} Attention spikes often signal a crisis. When a country suddenly looks
 riskier, investors sell until the price is low enough that the expected future return pays them for
-holding the risk, so high-attention countries earn \emph{higher} returns afterwards, and the gain
-persists.
+holding the risk. The country's expected future payoffs are unchanged, but they can now be bought
+at a lower price, so the expected return from holding it is higher: high-attention countries earn
+\emph{higher} returns afterwards, and the gain persists as long as the risk does.
 
 H0 excludes H1 and H2, but H1 and H2 do not strictly rule each other out: both can be partly true.
 The horizon profile of the High-minus-Low spread shows which one dominates: a full reversal points
@@ -83,7 +85,7 @@ All data is free and the raw downloads are committed to the repository.
 
 \textbf{Universe.} I start from all \NCandidates{} iShares MSCI single-country ETFs (US
 included) and keep those launched before 1 July 2015 whose median daily dollar volume was at
-least \$5M over July 2014--June 2015. Measuring liquidity \emph{before} the sample avoids
+least \$5M over July 2014--June 2015. Measuring liquidity before the sample avoids
 selecting ETFs that later became popular. The \$5M threshold is a judgment call: at that
 volume a position of a few hundred thousand dollars is below 5\% of one day's trading, and bid--ask
 spreads stay within the cost assumption of Section~\ref{sec:perf}; the principle of excluding
@@ -104,7 +106,10 @@ The log difference makes large and small countries comparable (India's page has 
 traffic of Chile's), and the median of the previous eight weeks, taken from \refto{da2011}{Da, Engelberg \& Gao
 (2011)}, adapts to slow trends such as the secular decline of Wikipedia traffic while ignoring
 one-off spikes. Portfolios use only the cross-sectional rank of ASV, so extreme weeks cannot
-dominate. Figure~\ref{fig:signal} in the appendix shows the signal around the Brexit vote.
+dominate. Figure~\ref{fig:signal} (appendix) illustrates the construction on an event whose attention
+spike is unambiguous, the Brexit referendum: weekly views of the United Kingdom page jump to about
+\BrexitRatio{} times their baseline, ASV reaches \BrexitASV{}, and ASV turns negative for a few weeks
+afterwards while the eight-week median catches up.
 
 \textbf{Timing and sample.} The signal uses views up to Sunday 24:00 UTC; positions are opened
 at the close of the next US trading day and held one week, so there is no look-ahead. The sample
@@ -126,10 +131,9 @@ computed (Appendix~\ref{app:spec}).
         25 countries); the remaining countries are not traded.
   \item At the Monday close (Tuesday if Monday is a US holiday), buy every High ETF and short every
         Low ETF, with equal dollar amounts per ETF and equal total dollars on each side.
-  \item Hold one week; at the next rebalance close repeat steps 2--5 and trade only the differences.
-  \item If an ETF is suspended or delisted, its position can no longer be traded: value it at
-        its last traded price, remove the ETF from future rankings, and book the liquidation
-        proceeds when the issuer pays them.
+  \item Hold one week; at the next rebalance close (the close of the first US trading day of the
+        following week) repeat steps 2--5 and trade only the differences.
+  \item If an ETF is suspended or delisted, remove it from the universe.
 \end{enumerate}
 
 % =====================================================================================
@@ -138,7 +142,7 @@ computed (Appendix~\ref{app:spec}).
 Table~\ref{tab:main} reports the three tercile portfolios and the long--short spread.
 The ordering is monotonic but in the \emph{opposite} direction to H1 and H2: High earns
 \HighAnn\% per year, Middle \MiddleAnn\% and Low \LowAnn\%. The spread of \LSAnn\% per year is not
-significant ($t=\LSt$, Sharpe \LSSharpe). The horizon profile (Figure~\ref{fig:main}b) shows
+significant ($t=\LSt$). The horizon profile (Figure~\ref{fig:main}b) shows
 neither the rise-and-reversal predicted by price pressure (H1) nor a persistent positive spread
 (H2): no single week after formation is significant and the cumulative spread drifts slowly
 downward. Figure~\ref{fig:main}a shows that most of the gross loss occurs in 2022 and 2023 (losses of \LossTwentyTwo\% and
@@ -161,54 +165,58 @@ return earned in week $k$ after formation, with 95\% confidence intervals, and i
 \label{fig:main}
 \end{figure}
 
-\textbf{Is attention new information?} Table~\ref{tab:newinfo} asks whether the weak negative
-spread is a disguised version of known effects. In Fama--MacBeth regressions the ASV coefficient
-alone is \FMasv\% per standard deviation ($t=\FMasvt$); adding past returns at three horizons,
-volatility and the baseline attention level shrinks it to \FMasvc\% ($t=\FMasvct$). Attention is
-slightly higher after recent losses, consistent with crises drawing readers, but this link is
-weak. Against four factors built from the same universe, the alpha is \AlphaAnn\% per year
-($t=\Alphat$) and the factors explain only \AlphaRsq\% of the spread's variance: it is not market,
-momentum, reversal or dollar exposure, it is mostly noise. The short-term reversal factor itself
-is significant in this universe (Appendix~\ref{app:tables}), which shows the setup can detect a
-real cross-sectional effect.
+\textbf{Is attention new information?} A spread can be predictable without attention carrying any
+new information. Attention may simply react to past price moves (a crash draws readers), in which
+case sorting on attention would only repackage known return patterns such as short-term reversal or
+momentum. I check this in two ways (Table~\ref{tab:newinfo} in the appendix). First, each week I
+regress next-week returns across countries on the attention rank, alone and then together with past
+returns at three horizons, volatility and the baseline attention level, and average the weekly
+coefficients (Fama--MacBeth). Alone, the attention coefficient is \FMasv\% per standard deviation
+($t=\FMasvt$); with the controls it shrinks to \FMasvc\% ($t=\FMasvct$), so the weak effect picked
+up by the sort mostly reflects past price moves. Second, I regress the weekly High-minus-Low return
+on four factors built from the same \NEtfs{} ETFs: the market, momentum, short-term reversal and the
+US dollar. The intercept (alpha), the part of the spread these factors cannot explain, is
+\AlphaAnn\% per year ($t=\Alphat$), and the factors explain only \AlphaRsq\% of its weekly variance
+(the regression $R^2$). The spread is therefore neither a disguised factor bet nor new information:
+it is mostly noise. The setup can detect a real effect, though: the short-term reversal factor
+itself is significant in this universe ($t=\PremREVt$).
 
-\begin{table}[h]
-\centering\small
-\caption{Panel A: Fama--MacBeth regressions on cross-sectionally standardized variables
-(Newey--West $t$ in parentheses). Panel B: High-minus-Low regressed on market, momentum, reversal and
-dollar factors built from the same universe.}
-\label{tab:newinfo}
-\input{tables/tab_newinfo}
-\end{table}
 
 % =====================================================================================
 \section{Robustness}
 
-All variations were fixed in the frozen specification. Figure~\ref{fig:robustness} shows that
-the sign is negative in \RobNegative{} of \RobTotal{} variations but the effect is never reliable.
-Only the 4-week baseline crosses $|t|=2$ ($t=\RoneFourt$); with thirteen tests at the 5\% level, about
-one such crossing is expected by chance alone ($13\times 5\%\approx 0.65$). The sign flips with \emph{Economy of} pages and in 2020--2021, and the spread
-weakens if trades are delayed by one day. Dropping any single country leaves $t$ between \LOOtMin{}
-and \LOOtMax{}, so no country drives the result, and excluding English-majority countries (whose
-pages are read mostly by residents) changes little. Finally, shuffling the signal across countries
-within each week 1{,}000 times produces a spread at least as extreme as the actual one in
-\PlaceboP{} of cases (two-sided $p=\PlaceboP$).
+A robustness check re-runs the main test after changing one arbitrary choice at a time. The frozen
+specification fixed thirteen such variations in advance: the baseline window (R1), the portfolio
+construction (R2), the attention page (R3), the sub-period (R4), the trade timing (R6), the
+global-fear regime (R8) and the set of countries (R9). A real effect should keep its sign across
+them; an effect whose sign changes depends on arbitrary choices rather than on attention.
+Figure~\ref{fig:robustness} shows that the sign is negative in \RobNegative{} of \RobTotal{}
+variations, but the effect is never reliable. Only the 4-week baseline crosses $|t|=2$
+($t=\RoneFourt$), and this is what chance alone produces: when there is no effect, each test still has
+a 5\% probability of crossing $|t|=2$, so across thirteen tests about $13\times 5\%\approx 0.65$ such
+crossings are expected. The sign flips with \emph{Economy of} pages and in 2020--2021, and the spread
+weakens if trades are delayed by one day. If a single country drove the result, dropping it would
+push $t$ towards zero or flip its sign; instead, dropping any one country (R5) leaves $t$ between
+\LOOtMin{} and \LOOtMax{}, close to the full-sample \LSt. Excluding English-majority countries, whose
+pages are read mostly by residents, changes little. Finally, shuffling the attention ranking across
+countries within each week 1{,}000 times (R7) produces a spread at least as extreme as the actual one
+in \PlaceboPct\% of cases (two-sided $p=\PlaceboP$).
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.62\textwidth]{figures/fig_robustness.pdf}
-\caption{Annualized gross High-minus-Low return and 95\% Newey--West confidence interval for every
-pre-specified variation: R1 baseline window, R2 portfolio construction, R3 \emph{Economy of}
-pages, R4 sub-periods, R6 one-day trading delay, R8 global-fear regimes, R9 non-English-majority
-countries. Full numbers in Table~\ref{tab:robustness}.}
+\caption{Annualized gross High-minus-Low return and 95\% Newey--West confidence interval for each
+pre-specified variation (defined in the text). Full numbers in Table~\ref{tab:robustness}.}
 \label{fig:robustness}
 \end{figure}
 
 % =====================================================================================
 \section{Would I trade it?}
 No. Before seeing any result I fixed four conditions that must all hold before trading the signal
-with real capital (Table~\ref{tab:decision}); only one passes, the sign being the same in two of the
-three sub-periods.
+with real capital (Table~\ref{tab:decision}). Each answers a question a trader would ask: does the
+strategy make money after costs (a), is it stable across periods (b), is it more than a known factor
+in disguise (c), and does it survive uncertainty about trading costs (d)? Only (b) passes: the sign is
+the same in two of the three sub-periods.
 
 \textbf{Costs make it structurally untradable.} Attention spikes fade within days, so about
 \TurnoverPerSide\% of each side is replaced every week, an average holding period of about 1.2 weeks. At 10\,bp per trade in developed and
@@ -224,7 +232,7 @@ each week, do as well. The result is also fragile: the sign flips when attention
 \emph{Economy of} pages or when the sample is restricted to 2020--2021, and the spread weakens when
 trades are delayed by one day. Known factors do not explain it either: the four-factor alpha is
 \AlphaAnn\% per year and insignificant ($t=\Alphat$), the factors explaining only \AlphaRsq\% of the
-variance. Finally, no single country drives the result
+spread's variance (the $R^2$ of the factor regression). Finally, no single country drives the result
 ($t$ between \LOOtMin{} and \LOOtMax{} when any one country is dropped).
 
 \textbf{Comparison with the literature.} \refto{barber2008}{Barber \& Odean (2008)} show that
@@ -297,7 +305,7 @@ DM/EM: MSCI classification as of 1 July 2015.}
 \centering
 \includegraphics[width=0.75\textwidth]{figures/fig_liquidity.pdf}
 \caption{Liquidity filter. Blue: included. ERUS (Russia) is not shown: Yahoo Finance no
-longer has its price history, so its volume is unknown rather than zero.}
+longer has its price history, so its volume is unknown.}
 \end{figure}
 
 \section{Deviations, implementation details and limitations}\label{app:deviations}
@@ -316,7 +324,7 @@ longer has its price history, so its volume is unknown rather than zero.}
         for the final four weeks.
   \item Volatility is the standard deviation of daily log returns over the previous 182 calendar
         days, with at least 100 observations.
-  \item Transaction costs of 10\,bp (developed) and 20\,bp (emerging) per one-way trade are
+  \item Transaction costs of 10\,bp (developed country) and 20\,bp (emerging country) per one-way trade are
         assumptions, not measured quotes. They cover commission, half the bid--ask spread and
         slippage, deliberately on the conservative side; short-borrow fees are not modelled and
         would only lower net returns. With a total weekly turnover of \TurnoverTotal{}, the annual
@@ -349,6 +357,15 @@ median baseline, and the resulting ASV.}
 \end{figure}
 
 \section{Additional results}\label{app:tables}
+\begin{table}[h]
+\centering\small
+\caption{Panel A: Fama--MacBeth regressions on cross-sectionally standardized variables
+(Newey--West $t$ in parentheses). Panel B: High-minus-Low regressed on market, momentum, reversal and
+dollar factors built from the same universe.}
+\label{tab:newinfo}
+\input{tables/tab_newinfo}
+\end{table}
+
 \begin{table}[h]
 \centering\small
 \caption{Robustness: all pre-specified variations (gross of costs). Placebo (R7): two-sided

@@ -297,6 +297,8 @@ def main() -> None:
     wealth = (1 + ls).cumprod()
     trough = (wealth / wealth.cummax() - 1).idxmin()
     turnover = cost_info["mean_turnover_per_week"]
+    uk = panel[(panel["ticker"] == "EWU") & (panel["week_end"] == "2016-06-26")]
+    brexit_asv = float(uk["asv8"].iloc[0])
     inc = universe[universe["included"]]
     numbers({
         "NWeeks": str(g["weeks"]), "NEtfs": str(len(inc)), "NCandidates": str(len(universe)),
@@ -326,6 +328,7 @@ def main() -> None:
         "TroughDate": f"{trough:%B %Y}",
         "TurnoverTotal": f"{turnover:.2f}", "CostMultiplier": f"{turnover * 52:.0f}",
         "BreakEvenBps": f"{abs(ls.mean()) / turnover * 1e4:.1f}",
+        "BrexitASV": f"{brexit_asv:.1f}", "BrexitRatio": f"{np.exp(brexit_asv):.0f}",
     })
     shutil.copy(ROOT / "docs" / "spec_frozen_2026-10-03.txt", REPORT / "spec_frozen.txt")
     print("Wrote", sorted(p.name for p in FIGURES.glob("*.pdf")), sorted(p.name for p in TABLES.glob("*.tex")))

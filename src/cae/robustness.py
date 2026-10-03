@@ -145,7 +145,7 @@ def main() -> None:
             "condition": [
                 "a) net-of-cost NW t > 2 (profitable as specified; |t| of a loss does not count)",
                 "b) same sign in >= 2 of 3 sub-periods",
-                "c) alpha on four factors significant (|t| > 2)",
+                "c) alpha against market, momentum, reversal and dollar factors significant (|t| > 2)",
                 "d) break-even cost > 2 x assumed cost",
             ],
             "value": [
