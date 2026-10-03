@@ -1,0 +1,308 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2cm]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+\setlist{itemsep=1pt,topsep=3pt}
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+
+\input{numbers}
+\newcommand{\repourl}{https://github.com/Corentin00/country-attention-etfs}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+
+\title{\vspace{-1.5cm}\textbf{Does the World's Attention Move Country Markets?}\\[2pt]
+\large Wikipedia page views and the cross-section of country ETF returns}
+\author{\todo{Your name} \\ \small Hedge Fund Club St.\ Gallen --- Systematic track}
+\date{\small October 2026 \quad$\cdot$\quad Code, data and frozen specification: \url{\repourl}}
+
+\begin{document}
+\maketitle
+\vspace{-0.6cm}
+
+\noindent\textbf{Summary.}
+I test whether abnormal English Wikipedia attention to a country predicts the relative weekly
+returns of its iShares MSCI ETF, using \NEtfs{} liquid country ETFs over \NWeeks{} weeks
+(2015--2026) and a specification frozen before any return was computed. High-attention
+countries underperform low-attention ones by \LSAnn\% per year, but the spread is not
+significant (Newey--West $t=\LSt$), vanishes once past returns are controlled for, is not
+explained by known factors, and is matched by \PlaceboPct\% of random placebo signals.
+Because attention is short-lived, about \TurnoverPerSide\% of each side is replaced every week
+and the strategy loses \NetAnn\% per year after costs. I would not trade it.
+
+% =====================================================================================
+\section{Economic thesis}
+\todo{To be written: why attention could matter; H0 (efficient), H1 (price pressure: positive
+in weeks 1--2 then reversal), H2 (risk premium: positive and persistent); how the horizon profile
+separates them; related work (Barber \& Odean 2008; Da, Engelberg \& Gao 2011) and what is new here.}
+
+% =====================================================================================
+\section{Data and signal construction}
+
+\textbf{Data.} Daily English Wikipedia page views come from the Wikimedia REST API
+(\texttt{agent=user}, which excludes identified bots), available from 1 July 2015.
+ETF prices are daily adjusted closes from Yahoo Finance, so returns include dividends.
+The risk-free rate is from the Ken French Data Library; the US dollar is proxied by the UUP ETF.
+All data is free and the raw downloads are committed to the repository.
+
+\textbf{Universe.} I start from all \NCandidates{} iShares MSCI single-country ETFs (US
+included) and keep those launched before 1 July 2015 whose median daily dollar volume was at
+least \$5M over July 2014--June 2015. Measuring liquidity \emph{before} the sample avoids
+selecting ETFs that later became popular. \NEtfs{} ETFs pass (\NDeveloped{} developed,
+\NEmerging{} emerging markets). The US ETF (EUSA) fails the liquidity rule, and Russia (ERUS)
+is missing because its price history was deleted after the 2022 suspension
+(Appendix~\ref{app:universe}).
+
+\textbf{Signal.} Weeks run Monday to Sunday (UTC). For country $i$ and week $w$, let $V_{i,w}$
+be the sum of the seven daily views of the country's Wikipedia page. Abnormal attention is
+\begin{equation*}
+  \mathrm{ASV}_{i,w} \;=\; \ln V_{i,w} \;-\; \ln \operatorname{median}\!\left(V_{i,w-1},\dots,V_{i,w-8}\right).
+\end{equation*}
+The log difference makes large and small countries comparable (India's page has six times the
+traffic of Chile's), and the median of the previous eight weeks, taken from Da, Engelberg \& Gao
+(2011), adapts to slow trends such as the secular decline of Wikipedia traffic while ignoring
+one-off spikes. Portfolios use only the cross-sectional rank of ASV, so extreme weeks cannot
+dominate. Figure~\ref{fig:signal} in the appendix shows the signal around the Brexit vote.
+
+\textbf{Timing and sample.} The signal uses views up to Sunday 24:00 UTC; positions are opened
+at the close of the next US trading day and held one week, so there is no look-ahead. The sample
+runs from the signal week ending 6 September 2015 (the first with eight weeks of history) to the
+week ending 20 September 2026: \NWeeks{} weeks. The full specification, including the robustness
+list and the decision rule, was frozen and time-stamped on 3 October 2026 before any return was
+computed (Appendix~\ref{app:spec}).
+
+% =====================================================================================
+\section{Strategy}
+\begin{enumerate}[leftmargin=*]
+  \item Universe: the \NEtfs{} ETFs of Appendix~\ref{app:universe}.
+  \item Every Monday before the US close, download the previous week's (Monday--Sunday UTC) daily
+        English Wikipedia views (\texttt{agent=user}) of each country page, plus the eight weeks before it.
+  \item For each country compute $V$ = last week's total views, $B$ = median of the eight previous
+        weekly totals, and $\mathrm{ASV} = \ln V - \ln B$.
+  \item Rank the countries by ASV. The top third (rounded down) is \emph{High}, the bottom third is
+        \emph{Low}; the middle is not traded.
+  \item At the Monday close (Tuesday if Monday is a US holiday), buy every High ETF and short every
+        Low ETF, with equal dollar amounts per ETF and equal total dollars on each side.
+  \item Hold one week; at the next rebalance close repeat steps 2--5 and trade only the differences.
+  \item If an ETF stops trading, close it at its last price and drop it from the universe.
+\end{enumerate}
+
+% =====================================================================================
+\section{Performance evaluation}
+
+Table~\ref{tab:main} reports the three tercile portfolios and the long--short spread.
+The ordering is monotonic but in the \emph{opposite} direction to H1 and H2: High earns
+\HighAnn\% per year, Middle \MiddleAnn\% and Low \LowAnn\%. The spread of \LSAnn\% per year is not
+significant ($t=\LSt$, Sharpe \LSSharpe). The horizon profile (Figure~\ref{fig:main}b) shows
+neither the rise-and-reversal predicted by price pressure (H1) nor a persistent positive spread
+(H2): no single week after formation is significant and the cumulative spread drifts slowly
+downward. Figure~\ref{fig:main}a shows that most of the gross loss occurs between late 2021 and 2023.
+
+\begin{table}[h]
+\centering\small
+\caption{One-week holding, weekly rebalancing, September 2015--September 2026. Newey--West
+$t$-statistics with four lags. Net returns deduct 10\,bp (developed) or 20\,bp (emerging) per
+one-way trade.}
+\label{tab:main}
+\input{tables/tab_main}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_main.pdf}
+\caption{(a) Cumulative High-minus-Low return, gross and net of costs. (b) Mean High-minus-Low
+return earned in week $k$ after formation, with 95\% confidence intervals, and its cumulative sum.}
+\label{fig:main}
+\end{figure}
+
+\textbf{Is attention new information?} Table~\ref{tab:newinfo} asks whether the weak negative
+spread is a disguised version of known effects. In Fama--MacBeth regressions the ASV coefficient
+alone is \FMasv\% per standard deviation ($t=\FMasvt$); adding past returns at three horizons,
+volatility and the baseline attention level shrinks it to \FMasvc\% ($t=\FMasvct$). Attention is
+slightly higher after recent losses, consistent with crises drawing readers, but this link is
+weak. Against four factors built from the same universe, the alpha is \AlphaAnn\% per year
+($t=\Alphat$) and the factors explain only \AlphaRsq\% of the spread's variance: it is not market,
+momentum, reversal or dollar exposure, it is mostly noise. The short-term reversal factor itself
+is significant in this universe (Appendix~\ref{app:tables}), which shows the setup can detect a
+real cross-sectional effect.
+
+\begin{table}[h]
+\centering\small
+\caption{Panel A: weekly cross-sectional regressions of next-week returns on cross-sectionally
+standardized variables; time-series means with Newey--West $t$ in parentheses. Panel B:
+regression of the weekly High-minus-Low return on equal-weighted universe excess return (Market),
+12-1 week momentum, last-week reversal and the UUP return.}
+\label{tab:newinfo}
+\input{tables/tab_newinfo}
+\end{table}
+
+% =====================================================================================
+\section{Robustness}
+
+All variations were fixed in the frozen specification. Figure~\ref{fig:robustness} shows that
+the sign is negative in \RobNegative{} of \RobTotal{} variations but the effect is never reliable.
+Only the 4-week baseline crosses $|t|=2$ ($t=\RoneFourt$), which is what one would expect by chance
+among thirteen tests. The sign flips with \emph{Economy of} pages and in 2020--2021, and the spread
+weakens if trades are delayed by one day. Dropping any single country leaves $t$ between \LOOtMin{}
+and \LOOtMax{}, so no country drives the result, and excluding English-majority countries (whose
+pages are read mostly by residents) changes little. Finally, shuffling the signal across countries
+within each week 1{,}000 times produces a spread at least as extreme as the actual one in
+\PlaceboP{} of cases (two-sided $p=\PlaceboP$).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/fig_robustness.pdf}
+\caption{Annualized gross High-minus-Low return and 95\% Newey--West confidence interval for every
+pre-specified variation: R1 baseline window, R2 portfolio construction, R3 \emph{Economy of}
+pages, R4 sub-periods, R6 one-day trading delay, R8 global-fear regimes, R9 non-English-majority
+countries. Full numbers in Table~\ref{tab:robustness}.}
+\label{fig:robustness}
+\end{figure}
+
+% =====================================================================================
+\section{Would I trade it?}
+\todo{To be written: decision rule result (Table~\ref{tab:decision} in the appendix can be moved
+here), turnover and costs as the structural obstacle, what I would try next, reflection.}
+
+% =====================================================================================
+\clearpage
+\appendix
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{figure}{0}\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
+
+\section{Pre-registered specification}\label{app:spec}
+The specification below was e-mailed to myself and committed as the first commit of the
+repository (\texttt{f33a66c}, 3 October 2026, 15:17 CEST) before any return was computed.
+Deviations are listed in Appendix~\ref{app:deviations}.
+
+{\scriptsize\VerbatimInput{spec_frozen.txt}}
+
+\section{Universe}\label{app:universe}
+\begin{table}[h]
+\centering\footnotesize
+\caption{All candidate ETFs, sorted by median daily dollar volume over July 2014--June 2015.
+DM/EM: MSCI classification as of 1 July 2015.}
+\input{tables/tab_universe}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{figures/fig_liquidity.pdf}
+\caption{Liquidity filter. Blue: included.}
+\end{figure}
+
+\section{Deviations, implementation details and limitations}\label{app:deviations}
+\textbf{Deviations from the frozen specification.}
+\begin{itemize}[leftmargin=*]
+  \item Decision rule (a) reads ``net-of-cost $|t|>2$''. Read literally, a significantly
+        \emph{losing} strategy would pass; I apply the intended meaning, a profitable strategy as
+        specified ($t>2$). The verdict is unchanged either way.
+  \item Table~\ref{tab:newinfo} adds an ASV-only Fama--MacBeth column as a reference point for the
+        specified regression with controls.
+\end{itemize}
+\textbf{Implementation details not fixed by the specification.}
+\begin{itemize}[leftmargin=*]
+  \item US trading days are days on which at least 90\% of the ETFs have a price.
+  \item The Ken French risk-free series ends on 31 August 2026; its last value is carried forward
+        for the final four weeks.
+  \item Volatility is the standard deviation of daily log returns over the previous 182 calendar
+        days, with at least 100 observations.
+  \item The horizon profile reports both event-time returns (week $k$ after formation) and
+        overlapping Jegadeesh--Titman portfolios held $h$ weeks, with Newey--West lags $\max(4,h)$.
+\end{itemize}
+\textbf{Limitations.}
+\begin{itemize}[leftmargin=*]
+  \item \emph{Survivorship:} Russia, whose ETF was suspended in 2022, is missing for lack of data.
+  \item \emph{Bots:} a few spikes have no identifiable news event (e.g.\ Canada, 22 May 2017, 59 times
+        the median; Singapore on 24 December of both 2016 and 2017 with near-identical counts) and are
+        probably automated traffic misclassified as human. Ranking limits their effect to one week each.
+  \item \emph{Declining traffic:} country pages lost a third to a half of their views since 2015
+        (search snippets, apps, AI assistants, improved bot filtering). The eight-week baseline and the
+        within-week ranking remove common trends, but the signal is noisier in recent years.
+  \item \emph{After long events} the eight-week median is itself elevated, so a country is sorted into
+        Low for several weeks after a major spike (Figure~\ref{fig:signal}b).
+  \item \emph{Language:} English Wikipedia mixes foreign and domestic readers; R9 addresses this.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_signal_example.pdf}
+\caption{The signal around the Brexit referendum (23 June 2016): weekly views, the eight-week
+median baseline, and the resulting ASV.}
+\label{fig:signal}
+\end{figure}
+
+\section{Additional results}\label{app:tables}
+\begin{table}[h]
+\centering\small
+\caption{Robustness: all pre-specified variations (gross of costs). Placebo (R7): two-sided
+$p=\PlaceboP$.}
+\label{tab:robustness}
+\input{tables/tab_robustness}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Leave one country out (R5): High-minus-Low after dropping each ETF.}
+\input{tables/tab_loo}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{Decision rule (frozen specification, section 11).}
+\label{tab:decision}
+\input{tables/tab_decision}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_terciles.pdf}
+\caption{Cumulative gross returns of the three tercile portfolios.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/fig_placebo.pdf}
+\caption{Placebo test (R7): mean High-minus-Low return for 1{,}000 signals shuffled across
+countries within each week.}
+\end{figure}
+
+\textit{Factor premia in the universe (mean weekly return, Newey--West $t$):} market \PremMKT\%
+($t=\PremMKTt$), momentum \PremMOM\% ($t=\PremMOMt$), short-term reversal \PremREV\%
+($t=\PremREVt$), US dollar \PremUSD\% ($t=\PremUSDt$).
+
+\section{Reproducibility}
+Python 3.12 with \texttt{uv}. From the repository root:
+\begin{verbatim}
+uv sync
+uv run python -m cae.universe      # prices + universe filter
+uv run python -m cae.views         # Wikipedia views
+uv run python -m cae.riskfree      # Ken French risk-free rate
+uv run python -m cae.panel         # weekly panel
+uv run python -m cae.main_test     # sections 6-7
+uv run python -m cae.new_info      # section 8
+uv run python -m cae.robustness    # sections 9-11
+uv run python -m cae.report_assets # figures and tables for this PDF
+uv run python -m cae.check_week EWZ 2022-10-30   # hand-check any row
+\end{verbatim}
+
+\section{Use of AI}
+\todo{Review and rewrite in your own words.} I used an AI assistant (Claude) to brainstorm signals,
+check data availability, write and debug the Python pipeline, and draft the technical sections.
+I chose the signal and the design decisions, froze the specification before seeing any result,
+inspected every dataset, verified panel rows by hand against the raw data, and kept the
+specification unchanged after the results came in. I am responsible for the methods and results.
+
+\end{document}
