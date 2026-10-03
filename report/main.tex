@@ -45,9 +45,28 @@ and the strategy loses \NetLoss\% per year after costs. I would not trade it.
 
 % =====================================================================================
 \section{Economic thesis}
-\todo{To be written: why attention could matter; H0 (efficient), H1 (price pressure: positive
-in weeks 1--2 then reversal), H2 (risk premium: positive and persistent); how the horizon profile
-separates them; related work (Barber \& Odean 2008; Da, Engelberg \& Gao 2011) and what is new here.}
+Do bursts of public attention to a country move the price of its equity ETF? I test three
+hypotheses, which differ in the sign and the timing of the effect.
+
+\textbf{H0: attention is already in prices.} Page views are public, so professional investors can
+watch them as easily as I can; if attention predicted returns, they would already trade on it and
+arbitrage the effect away. Abnormal attention then does not predict returns.
+
+\textbf{H1: price pressure.} When a country's page draws unusual attention, inexperienced investors
+are reading about it to inform themselves before buying its ETF. Their buying pushes the ETF slightly
+above fair value, so high-attention countries outperform for a week or two and then give the gain
+back \refto{barber2008}{(Barber \& Odean, 2008}; \refto{da2011}{Da, Engelberg \& Gao, 2011)}.
+
+\textbf{H2: risk premium.} Attention spikes often signal a crisis. When a country suddenly looks
+riskier, investors sell until the price is low enough that the expected future return pays them for
+holding the risk, so high-attention countries earn \emph{higher} returns afterwards, and the gain
+persists.
+
+H0 excludes H1 and H2, but H1 and H2 do not strictly rule each other out: both can be partly true.
+The horizon profile of the High-minus-Low spread shows which one dominates: a full reversal points
+to H1, no reversal to H2, and a partial reversal to a mix. Existing evidence concerns individual
+stocks and Google searches; here the question is asked for whole countries, using Wikipedia page
+views and tradable ETFs.
 
 % =====================================================================================
 \section{Data and signal construction}
