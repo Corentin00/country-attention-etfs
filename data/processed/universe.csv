@@ -1,0 +1,41 @@
+ticker,wiki_title,emerging,first_price,last_price,median_dollar_volume_2014_15,included,exclusion_reason
+EWA,Australia,False,2014-07-01,2026-10-02,41182029,True,
+EWO,Austria,False,2014-07-01,2026-10-02,912836,False,below liquidity threshold
+EWK,Belgium,False,2014-07-01,2026-10-02,1894657,False,below liquidity threshold
+EWZ,Brazil,True,2014-07-01,2026-10-02,668490861,True,
+EWC,Canada,False,2014-07-01,2026-10-02,40490420,True,
+ECH,Chile,True,2014-07-01,2026-10-02,9164940,True,
+MCHI,China,True,2014-07-01,2026-10-02,23085545,True,
+EDEN,Denmark,False,2014-07-01,2026-10-02,630073,False,below liquidity threshold
+EFNL,Finland,False,2014-07-01,2026-10-02,204447,False,below liquidity threshold
+EWQ,France,False,2014-07-01,2026-10-02,15880816,True,
+EWG,Germany,False,2014-07-01,2026-10-02,123966847,True,
+EWH,Hong_Kong,False,2014-07-01,2026-10-02,55226287,True,
+INDA,India,True,2014-07-01,2026-10-02,27700731,True,
+EIDO,Indonesia,True,2014-07-01,2026-10-02,15149464,True,
+EIRL,Republic_of_Ireland,False,2014-07-01,2026-10-02,1060339,False,below liquidity threshold
+EIS,Israel,False,2014-07-01,2026-10-02,1294923,False,below liquidity threshold
+EWI,Italy,False,2014-07-01,2026-10-02,32636884,True,
+EWJ,Japan,False,2014-07-01,2026-10-02,331453186,True,
+EWM,Malaysia,True,2014-07-01,2026-10-02,18369279,True,
+EWW,Mexico,True,2014-07-01,2026-10-02,125453794,True,
+EWN,Netherlands,False,2014-07-01,2026-10-02,3605121,False,below liquidity threshold
+ENZL,New_Zealand,False,2014-07-01,2026-10-02,742460,False,below liquidity threshold
+ENOR,Norway,False,2014-07-01,2026-10-02,311617,False,below liquidity threshold
+EPU,Peru,True,2014-07-01,2026-10-02,1539978,False,below liquidity threshold
+EPHE,Philippines,True,2014-07-01,2026-10-02,8111178,True,
+EPOL,Poland,True,2014-07-01,2026-10-02,4892482,False,below liquidity threshold
+QAT,Qatar,True,2014-07-01,2026-10-02,133489,False,below liquidity threshold
+ERUS,Russia,True,,,0,False,no Yahoo data
+EWS,Singapore,False,2014-07-01,2026-10-02,11065841,True,
+EZA,South_Africa,True,2014-07-01,2026-10-02,26869057,True,
+EWY,South_Korea,True,2014-07-01,2026-10-02,135215786,True,
+EWP,Spain,False,2014-07-01,2026-10-02,40442946,True,
+EWD,Sweden,False,2014-07-01,2026-10-02,6343754,True,
+EWL,Switzerland,False,2014-07-01,2026-10-02,15954895,True,
+EWT,Taiwan,True,2014-07-01,2026-10-02,103553000,True,
+THD,Thailand,True,2014-07-01,2026-10-02,16825206,True,
+TUR,Turkey,True,2014-07-01,2026-10-02,15215216,True,
+UAE,United_Arab_Emirates,True,2014-07-01,2026-10-02,285983,False,below liquidity threshold
+EWU,United_Kingdom,False,2014-07-01,2026-10-02,44482149,True,
+EUSA,United_States,False,2014-07-01,2026-10-02,122472,False,below liquidity threshold
