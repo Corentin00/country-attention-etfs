@@ -11,7 +11,8 @@
 \usepackage{enumitem}
 \usepackage{fancyvrb}
 \usepackage{xcolor}
-\usepackage[hidelinks]{hyperref}
+\usepackage{placeins}
+\usepackage[colorlinks,allcolors=blue!50!black]{hyperref}
 
 \captionsetup{font=small,labelfont=bf,skip=4pt}
 \setlist{itemsep=1pt,topsep=3pt}
@@ -21,10 +22,11 @@
 \input{numbers}
 \newcommand{\repourl}{https://github.com/Corentin00/country-attention-etfs}
 \newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\newcommand{\refto}[2]{\hyperlink{ref:#1}{#2}}
 
 \title{\vspace{-1.5cm}\textbf{Does the World's Attention Move Country Markets?}\\[2pt]
 \large Wikipedia page views and the cross-section of country ETF returns}
-\author{\todo{Your name} \\ \small Hedge Fund Club St.\ Gallen --- Systematic track}
+\author{Corentin Caillaud \\ \small Hedge Fund Club St.\ Gallen --- Systematic track}
 \date{\small October 2026 \quad$\cdot$\quad Code, data and frozen specification: \url{\repourl}}
 
 \begin{document}
@@ -35,11 +37,11 @@
 I test whether abnormal English Wikipedia attention to a country predicts the relative weekly
 returns of its iShares MSCI ETF, using \NEtfs{} liquid country ETFs over \NWeeks{} weeks
 (2015--2026) and a specification frozen before any return was computed. High-attention
-countries underperform low-attention ones by \LSAnn\% per year, but the spread is not
+countries underperform low-attention ones by \LSLoss\% per year, but the spread is not
 significant (Newey--West $t=\LSt$), vanishes once past returns are controlled for, is not
 explained by known factors, and is matched by \PlaceboPct\% of random placebo signals.
 Because attention is short-lived, about \TurnoverPerSide\% of each side is replaced every week
-and the strategy loses \NetAnn\% per year after costs. I would not trade it.
+and the strategy loses \NetLoss\% per year after costs. I would not trade it.
 
 % =====================================================================================
 \section{Economic thesis}
@@ -59,19 +61,25 @@ All data is free and the raw downloads are committed to the repository.
 \textbf{Universe.} I start from all \NCandidates{} iShares MSCI single-country ETFs (US
 included) and keep those launched before 1 July 2015 whose median daily dollar volume was at
 least \$5M over July 2014--June 2015. Measuring liquidity \emph{before} the sample avoids
-selecting ETFs that later became popular. \NEtfs{} ETFs pass (\NDeveloped{} developed,
+selecting ETFs that later became popular. The \$5M threshold is a judgment call: at that
+volume a position of a few hundred thousand dollars is below 5\% of one day's trading, and bid--ask
+spreads stay within the cost assumption of Section~\ref{sec:perf}; the principle of excluding
+illiquid assets follows \refto{novymarx2016}{Novy-Marx \& Velikov (2016)} and
+\refto{hou2020}{Hou, Xue \& Zhang (2020)}. \NEtfs{} ETFs pass (\NDeveloped{} developed,
 \NEmerging{} emerging markets). The US ETF (EUSA) fails the liquidity rule, and Russia (ERUS)
 is missing because its price history was deleted after the 2022 suspension
 (Appendix~\ref{app:universe}).
 
-\textbf{Signal.} Weeks run Monday to Sunday (UTC). For country $i$ and week $w$, let $V_{i,w}$
-be the sum of the seven daily views of the country's Wikipedia page. Abnormal attention is
+\textbf{Signal.} Weeks run Monday to Sunday (UTC), the time zone in which Wikimedia counts daily
+views, so the Sunday cut-off is unambiguous. For country $i$ and week $w$, let $V_{i,w}$
+be the sum of the seven daily views of the country's Wikipedia page. Abnormal attention, ASV (``abnormal search volume'', the name
+\refto{da2011}{Da, Engelberg \& Gao (2011)} give to the same measure built from Google searches), is
 \begin{equation*}
-  \mathrm{ASV}_{i,w} \;=\; \ln V_{i,w} \;-\; \ln \operatorname{median}\!\left(V_{i,w-1},\dots,V_{i,w-8}\right).
+  \mathrm{ASV}_{i,w} \;=\; \ln\left(V_{i,w}\right) \;-\; \ln\left(\operatorname{median}\left(V_{i,w-1},\dots,V_{i,w-8}\right)\right).
 \end{equation*}
 The log difference makes large and small countries comparable (India's page has six times the
-traffic of Chile's), and the median of the previous eight weeks, taken from Da, Engelberg \& Gao
-(2011), adapts to slow trends such as the secular decline of Wikipedia traffic while ignoring
+traffic of Chile's), and the median of the previous eight weeks, taken from \refto{da2011}{Da, Engelberg \& Gao
+(2011)}, adapts to slow trends such as the secular decline of Wikipedia traffic while ignoring
 one-off spikes. Portfolios use only the cross-sectional rank of ASV, so extreme weeks cannot
 dominate. Figure~\ref{fig:signal} in the appendix shows the signal around the Brexit vote.
 
@@ -89,17 +97,20 @@ computed (Appendix~\ref{app:spec}).
   \item Every Monday before the US close, download the previous week's (Monday--Sunday UTC) daily
         English Wikipedia views (\texttt{agent=user}) of each country page, plus the eight weeks before it.
   \item For each country compute $V$ = last week's total views, $B$ = median of the eight previous
-        weekly totals, and $\mathrm{ASV} = \ln V - \ln B$.
-  \item Rank the countries by ASV. The top third (rounded down) is \emph{High}, the bottom third is
-        \emph{Low}; the middle is not traded.
+        weekly totals, and $\mathrm{ASV} = \ln(V) - \ln(B)$.
+  \item Rank the $N$ countries by ASV. The $\lfloor N/3\rfloor$ countries with the highest ASV form
+        \emph{High} and the $\lfloor N/3\rfloor$ with the lowest form \emph{Low} (8 each with
+        25 countries); the remaining countries are not traded.
   \item At the Monday close (Tuesday if Monday is a US holiday), buy every High ETF and short every
         Low ETF, with equal dollar amounts per ETF and equal total dollars on each side.
   \item Hold one week; at the next rebalance close repeat steps 2--5 and trade only the differences.
-  \item If an ETF stops trading, close it at its last price and drop it from the universe.
+  \item If an ETF is suspended or delisted, its position can no longer be traded: value it at
+        its last traded price, remove the ETF from future rankings, and book the liquidation
+        proceeds when the issuer pays them.
 \end{enumerate}
 
 % =====================================================================================
-\section{Performance evaluation}
+\section{Performance evaluation}\label{sec:perf}
 
 Table~\ref{tab:main} reports the three tercile portfolios and the long--short spread.
 The ordering is monotonic but in the \emph{opposite} direction to H1 and H2: High earns
@@ -177,6 +188,35 @@ here), turnover and costs as the structural obstacle, what I would try next, ref
 
 % =====================================================================================
 \clearpage
+\section*{References}
+\small
+\begin{itemize}[leftmargin=*,label={}]
+  \item \hypertarget{ref:barber2008}{}Barber, B.\,M., and T.\ Odean (2008). All that glitters: the effect of
+        attention and news on the buying behavior of individual and institutional investors.
+        \textit{Review of Financial Studies} 21(2), 785--818. \url{https://doi.org/10.1093/rfs/hhm079}
+  \item \hypertarget{ref:da2011}{}Da, Z., J.\ Engelberg, and P.\ Gao (2011). In search of attention.
+        \textit{Journal of Finance} 66(5), 1461--1499. \url{https://doi.org/10.1111/j.1540-6261.2011.01679.x}
+  \item \hypertarget{ref:fama1973}{}Fama, E.\,F., and J.\,D.\ MacBeth (1973). Risk, return, and equilibrium:
+        empirical tests. \textit{Journal of Political Economy} 81(3), 607--636.
+        \url{https://doi.org/10.1086/260061}
+  \item \hypertarget{ref:hou2020}{}Hou, K., C.\ Xue, and L.\ Zhang (2020). Replicating anomalies.
+        \textit{Review of Financial Studies} 33(5), 2019--2133. \url{https://doi.org/10.1093/rfs/hhy131}
+  \item \hypertarget{ref:jegadeesh1993}{}Jegadeesh, N., and S.\ Titman (1993). Returns to buying winners
+        and selling losers: implications for stock market efficiency. \textit{Journal of Finance}
+        48(1), 65--91. \url{https://doi.org/10.1111/j.1540-6261.1993.tb04702.x}
+  \item \hypertarget{ref:moat2013}{}Moat, H.\,S., C.\ Curme, A.\ Avakian, D.\,Y.\ Kenett, H.\,E.\ Stanley, and
+        T.\ Preis (2013). Quantifying Wikipedia usage patterns before stock market moves.
+        \textit{Scientific Reports} 3, 1801. \url{https://doi.org/10.1038/srep01801}
+  \item \hypertarget{ref:newey1987}{}Newey, W.\,K., and K.\,D.\ West (1987). A simple, positive semi-definite,
+        heteroskedasticity and autocorrelation consistent covariance matrix. \textit{Econometrica}
+        55(3), 703--708. \url{https://doi.org/10.2307/1913610}
+  \item \hypertarget{ref:novymarx2016}{}Novy-Marx, R., and M.\ Velikov (2016). A taxonomy of anomalies and
+        their trading costs. \textit{Review of Financial Studies} 29(1), 104--147.
+        \url{https://doi.org/10.1093/rfs/hhv063}
+\end{itemize}
+\normalsize
+
+\clearpage
 \appendix
 \renewcommand{\thesection}{\Alph{section}}
 \setcounter{figure}{0}\renewcommand{\thefigure}{A\arabic{figure}}
@@ -200,7 +240,8 @@ DM/EM: MSCI classification as of 1 July 2015.}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{figures/fig_liquidity.pdf}
-\caption{Liquidity filter. Blue: included.}
+\caption{Liquidity filter. Blue: included. ERUS (Russia) is not shown: Yahoo Finance no
+longer has its price history, so its volume is unknown rather than zero.}
 \end{figure}
 
 \section{Deviations, implementation details and limitations}\label{app:deviations}
@@ -283,6 +324,7 @@ countries within each week.}
 ($t=\PremMKTt$), momentum \PremMOM\% ($t=\PremMOMt$), short-term reversal \PremREV\%
 ($t=\PremREVt$), US dollar \PremUSD\% ($t=\PremUSDt$).
 
+\FloatBarrier
 \section{Reproducibility}
 Python 3.12 with \texttt{uv}. From the repository root:
 \begin{verbatim}
