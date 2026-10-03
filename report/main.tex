@@ -68,7 +68,8 @@ persists.
 H0 excludes H1 and H2, but H1 and H2 do not strictly rule each other out: both can be partly true.
 The horizon profile of the High-minus-Low spread shows which one dominates: a full reversal points
 to H1, no reversal to H2, and a partial reversal to a mix. Existing evidence concerns individual
-stocks and Google searches; here the question is asked for whole countries, using Wikipedia page
+stocks, using Google searches \refto{da2011}{(Da, Engelberg \& Gao, 2011)} or Wikipedia views of company
+pages \refto{moat2013}{(Moat et al., 2013)}; here the question is asked for whole countries, using Wikipedia page
 views and tradable ETFs.
 
 % =====================================================================================
@@ -140,13 +141,14 @@ The ordering is monotonic but in the \emph{opposite} direction to H1 and H2: Hig
 significant ($t=\LSt$, Sharpe \LSSharpe). The horizon profile (Figure~\ref{fig:main}b) shows
 neither the rise-and-reversal predicted by price pressure (H1) nor a persistent positive spread
 (H2): no single week after formation is significant and the cumulative spread drifts slowly
-downward. Figure~\ref{fig:main}a shows that most of the gross loss occurs between late 2021 and 2023.
+downward. Figure~\ref{fig:main}a shows that most of the gross loss occurs in 2022 and 2023 (losses of \LossTwentyTwo\% and
+\LossTwentyThree\%), with the trough in \TroughDate.
 
 \begin{table}[h]
 \centering\small
 \caption{One-week holding, weekly rebalancing, September 2015--September 2026. Newey--West
 $t$-statistics with four lags. Net returns deduct 10\,bp (developed) or 20\,bp (emerging) per
-one-way trade.}
+one-way trade. Vol: annualized volatility; Max DD: maximum drawdown; Hit: share of positive weeks.}
 \label{tab:main}
 \input{tables/tab_main}
 \end{table}
@@ -172,10 +174,9 @@ real cross-sectional effect.
 
 \begin{table}[h]
 \centering\small
-\caption{Panel A: weekly cross-sectional regressions of next-week returns on cross-sectionally
-standardized variables; time-series means with Newey--West $t$ in parentheses. Panel B:
-regression of the weekly High-minus-Low return on equal-weighted universe excess return (Market),
-12-1 week momentum, last-week reversal and the UUP return.}
+\caption{Panel A: Fama--MacBeth regressions on cross-sectionally standardized variables
+(Newey--West $t$ in parentheses). Panel B: High-minus-Low regressed on market, momentum, reversal and
+dollar factors built from the same universe.}
 \label{tab:newinfo}
 \input{tables/tab_newinfo}
 \end{table}
@@ -185,8 +186,8 @@ regression of the weekly High-minus-Low return on equal-weighted universe excess
 
 All variations were fixed in the frozen specification. Figure~\ref{fig:robustness} shows that
 the sign is negative in \RobNegative{} of \RobTotal{} variations but the effect is never reliable.
-Only the 4-week baseline crosses $|t|=2$ ($t=\RoneFourt$), which is what one would expect by chance
-among thirteen tests. The sign flips with \emph{Economy of} pages and in 2020--2021, and the spread
+Only the 4-week baseline crosses $|t|=2$ ($t=\RoneFourt$); with thirteen tests at the 5\% level, about
+one such crossing is expected by chance alone ($13\times 5\%\approx 0.65$). The sign flips with \emph{Economy of} pages and in 2020--2021, and the spread
 weakens if trades are delayed by one day. Dropping any single country leaves $t$ between \LOOtMin{}
 and \LOOtMax{}, so no country drives the result, and excluding English-majority countries (whose
 pages are read mostly by residents) changes little. Finally, shuffling the signal across countries
@@ -210,18 +211,20 @@ with real capital (Table~\ref{tab:decision}); only one passes, the sign being th
 three sub-periods.
 
 \textbf{Costs make it structurally untradable.} Attention spikes fade within days, so about
-\TurnoverPerSide\% of each side is replaced every week (a total weight change of 1.69 out of a
-maximum of 2), an average holding period of about 1.2 weeks. At 10\,bp per trade in developed and
-20\,bp in emerging markets this costs \CostAnn\% per year: even a correctly signed signal would need
+\TurnoverPerSide\% of each side is replaced every week, an average holding period of about 1.2 weeks. At 10\,bp per trade in developed and
+20\,bp in emerging markets (deliberately conservative, Appendix~\ref{app:deviations}) this costs \CostAnn\% per year: even a correctly signed signal would need
 more than \CostAnn\% of gross return per year just to break even, while the whole equal-weighted
 universe earned about 7\% per year. Net of costs the strategy loses \NetLoss\% per year
-($t=\Nett$, Table~\ref{tab:main}).
+($t=\Nett$, Table~\ref{tab:main}). The verdict does not hinge on the cost figure: at this turnover,
+even \BreakEvenBps\,bp per trade would erase the \LSLoss\% gross gap in either direction.
 
 \textbf{Before costs there is nothing to trade either.} The gross spread is insignificant
-($t=\LSt$) and indistinguishable from noise: \PlaceboPct\% of random placebo signals do as well. It
-is fragile, since its sign flips with \emph{Economy of} pages and in 2020--2021 and it weakens when
-trades are delayed by one day. There is no hidden alpha (\AlphaAnn\% per year, $t=\Alphat$, with the
-four factors explaining only \AlphaRsq\% of the variance), and no single country drives the result
+($t=\LSt$) and indistinguishable from noise: \PlaceboPct\% of placebo signals, which shuffle the attention ranking randomly across countries
+each week, do as well. The result is also fragile: the sign flips when attention is measured on
+\emph{Economy of} pages or when the sample is restricted to 2020--2021, and the spread weakens when
+trades are delayed by one day. Known factors do not explain it either: the four-factor alpha is
+\AlphaAnn\% per year and insignificant ($t=\Alphat$), the factors explaining only \AlphaRsq\% of the
+variance. Finally, no single country drives the result
 ($t$ between \LOOtMin{} and \LOOtMax{} when any one country is dropped).
 
 \textbf{Comparison with the literature.} \refto{barber2008}{Barber \& Odean (2008)} show that
@@ -237,7 +240,7 @@ which absorbs price pressure; and reading a country's Wikipedia page signals gen
 \textbf{Next steps.} Two extensions follow from these results: measuring attention on local-language
 Wikipedia, which is closer to the domestic investors who trade these markets, and combining attention
 with the short-term reversal effect, which is significantly positive in this universe
-($t=\PremREVt$). Both would need a new pre-registered specification.
+($t=\PremREVt$).
 
 % =====================================================================================
 \clearpage
@@ -276,7 +279,7 @@ with the short-term reversal effect, which is significantly positive in this uni
 \setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
 
 \section{Pre-registered specification}\label{app:spec}
-The specification below was e-mailed to myself and committed as the first commit of the
+The specification below was committed as the first commit of the
 repository (\texttt{f33a66c}, 3 October 2026, 15:17 CEST) before any return was computed.
 Deviations are listed in Appendix~\ref{app:deviations}.
 
@@ -293,7 +296,7 @@ DM/EM: MSCI classification as of 1 July 2015.}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{figures/fig_liquidity.pdf}
-\caption{Liquidity filter. Blue: included. ERUS (Russia) is not shown: Yahoo Finance no
+\caption{Liquidity filter. Dark blue: included. ERUS (Russia) is not shown: Yahoo Finance no
 longer has its price history, so its volume is unknown rather than zero.}
 \end{figure}
 
@@ -313,6 +316,13 @@ longer has its price history, so its volume is unknown rather than zero.}
         for the final four weeks.
   \item Volatility is the standard deviation of daily log returns over the previous 182 calendar
         days, with at least 100 observations.
+  \item Transaction costs of 10\,bp (developed) and 20\,bp (emerging) per one-way trade are
+        assumptions, not measured quotes. They cover commission, half the bid--ask spread and
+        slippage, deliberately on the conservative side; short-borrow fees are not modelled and
+        would only lower net returns. With a total weekly turnover of \TurnoverTotal{}, the annual
+        cost is about \CostMultiplier{} times the one-way cost, so the \LSLoss\% gross gap would be
+        erased by a cost of only \BreakEvenBps\,bp per trade, in either direction. The verdict
+        therefore does not depend on the exact figure.
   \item The horizon profile reports both event-time returns (week $k$ after formation) and
         overlapping Jegadeesh--Titman portfolios held $h$ weeks, with Newey--West lags $\max(4,h)$.
 \end{itemize}
@@ -369,8 +379,11 @@ $p=\PlaceboP$.}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.6\textwidth]{figures/fig_placebo.pdf}
-\caption{Placebo test (R7): mean High-minus-Low return for 1{,}000 signals shuffled across
-countries within each week.}
+\caption{Placebo test (R7). Each placebo signal shuffles the attention ranking randomly across
+countries within each week, so it has no information by construction. The histogram shows the mean
+High-minus-Low return of 1{,}000 such signals; the black line is the actual signal. The actual spread
+lies inside the bulk of the distribution: \PlaceboPct\% of random rankings produce a spread at least as
+large in absolute value, so the attention ranking cannot be distinguished from chance.}
 \end{figure}
 
 \textit{Factor premia in the universe (mean weekly return, Newey--West $t$):} market \PremMKT\%
@@ -394,10 +407,13 @@ uv run python -m cae.check_week EWZ 2022-10-30   # hand-check any row
 \end{verbatim}
 
 \section{Use of AI}
-\todo{Review and rewrite in your own words.} I used an AI assistant (Claude) to brainstorm signals,
-check data availability, write and debug the Python pipeline, and draft the technical sections.
-I chose the signal and the design decisions, froze the specification before seeing any result,
-inspected every dataset, verified panel rows by hand against the raw data, and kept the
-specification unchanged after the results came in. I am responsible for the methods and results.
+I used an AI assistant (Claude Opus 5.5) throughout this project: to brainstorm candidate
+signals, check data availability, write and debug the Python pipeline, and draft Sections 2--5
+and the appendices. I wrote Sections 1 and 6 myself, because they show how I think about the
+problem; the assistant only edited their wording at my request. The choice of the signal and of the
+design, the decision to freeze the specification before seeing any result, the hypotheses and the
+interpretation of the results are mine. I inspected every dataset, verified panel rows by hand
+against the raw data, kept the specification unchanged once the results came in, and reviewed,
+corrected and clarified the whole paper. I am responsible for the methods and results.
 
 \end{document}
