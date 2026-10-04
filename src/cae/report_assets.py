@@ -234,7 +234,7 @@ def tab_universe(universe: pd.DataFrame) -> None:
 
 
 def tab_decision(decision: pd.DataFrame) -> None:
-    lines = [f"{r.condition.split(' (')[0].replace('>=', r'$\geq$').replace('> ', '$>$ ').replace('|t|', '$|t|$').replace(' t ', ' $t$ ')} & "
+    lines = [f"{r.condition.replace('>=', r'$\geq$').replace('> ', '$>$ ').replace('|t|', '$|t|$').replace(' t ', ' $t$ ')} & "
              f"{r.value.replace('t = -', 't = $-$')} & {'pass' if r._3 else 'fail'} \\\\"
              for r in decision.itertuples()]
     write("tab_decision", "\n".join([

@@ -49,8 +49,8 @@ returns of its iShares MSCI ETF, using \NEtfs{} liquid country ETFs over \NWeeks
 countries underperform low-attention ones by \LSLoss\% per year. This spread is not significant
 (Newey--West $t=\LSt$): it weakens further once past returns are controlled for, known factors do not
 explain it, and \PlaceboPct\% of random placebo signals do as well.
-Because attention is short-lived, about \TurnoverPerSide\% of each side is replaced every week
-and the strategy loses \NetLoss\% per year after costs. I would not trade it.
+The ranking changes every week (about \TurnoverPerSide\% of each side is replaced), and
+the strategy loses \NetLoss\% per year after costs. I would not trade it.
 
 % =====================================================================================
 \section{Economic thesis}
@@ -228,8 +228,8 @@ strategy make money after costs (a), is it stable across periods (b), is it more
 in disguise (c), and does it survive uncertainty about trading costs (d)? Only (b) passes: the sign
 matches the full sample in two of the three sub-periods.
 
-\textbf{Costs make it structurally untradable.} Attention spikes fade within days, so about
-\TurnoverPerSide\% of each side is replaced every week, an average holding period of about \HoldWeeks{} weeks. At 10\,bp per trade in developed and
+\textbf{Costs make it structurally untradable.} The ranking changes every week: about
+\TurnoverPerSide\% of each side is replaced, an average holding period of about \HoldWeeks{} weeks. At 10\,bp per trade in developed and
 20\,bp in emerging markets (conservative, Appendix~\ref{app:deviations}) this costs \CostAnn\% per year, almost
 twice the 7\% per year that the whole equal-weighted universe earned above the risk-free rate. Net of costs the strategy loses \NetLoss\% per year
 ($t=\Nett$, Table~\ref{tab:main}). The verdict does not hinge on the cost figure: at this turnover,
@@ -344,7 +344,9 @@ median baseline, and the resulting ASV.}
 \centering\small
 \caption{Horizon profile. Event time: mean High-minus-Low return earned in week $k$ after formation
 (Figure~\ref{fig:main}b; week 0 is the signal week, exploratory). Overlapping: Jegadeesh--Titman
-portfolios held $h$ weeks, weekly return. Newey--West $t$ in parentheses.}
+portfolios held $h$ weeks, weekly return. Newey--West $t$ in parentheses. The overlapping returns use
+only weeks in which all $h$ cohorts are held, so they differ slightly from the average of the
+event-time columns; on a common sample the two coincide.}
 \label{tab:horizon}
 \input{tables/tab_horizon}
 \end{table}
@@ -408,9 +410,9 @@ uv run python -m cae.universe      # prices + universe filter
 uv run python -m cae.views         # Wikipedia views
 uv run python -m cae.riskfree      # Ken French risk-free rate
 uv run python -m cae.panel         # weekly panel
-uv run python -m cae.main_test     # sections 6-7
-uv run python -m cae.new_info      # section 8
-uv run python -m cae.robustness    # sections 9-11
+uv run python -m cae.main_test     # spec §6-7
+uv run python -m cae.new_info      # spec §8
+uv run python -m cae.robustness    # spec §9-11
 uv run python -m cae.report_assets # figures and tables for this PDF
 uv run python -m cae.check_week EWZ 2022-10-30   # hand-check any row
 \end{verbatim}

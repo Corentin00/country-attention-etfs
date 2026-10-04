@@ -143,9 +143,9 @@ def main() -> None:
     decision = pd.DataFrame(
         {
             "condition": [
-                "a) net-of-cost NW |t| > 2, applied as t > 2 (see Appendix C)",
-                "b) same sign in >= 2 of 3 sub-periods",
-                "c) alpha against market, momentum, reversal and dollar factors significant (|t| > 2)",
+                "a) net-of-cost NW |t| > 2 (applied as t > 2, see App. C)",
+                "b) same sign as the full sample in >= 2 of 3 sub-periods (see App. C)",
+                "c) alpha against market, momentum, reversal and dollar factors significant",
                 "d) break-even cost > 2 x assumed cost",
             ],
             "value": [
