@@ -107,7 +107,7 @@ def main() -> None:
     rows += [row(f"R1 window {k} weeks", sort_ls(wide(panel, f"asv{k}"), ret)) for k in (4, 12)]
     rows += [row("R2 quintiles", sort_ls(asv8, ret, buckets=5)),
              row("R2 rank-weighted", rank_weighted_ls(asv8, ret))]
-    rows += [row("R3 Economy-of pages", sort_ls(wide(panel, "asv8_econ"), ret))]
+    rows += [row("R3 Economy of pages", sort_ls(wide(panel, "asv8_econ"), ret))]
     rows += [row(f"R4 {name}", main_ls.loc[a:b]) for name, (a, b) in SUB_PERIODS.items()]
     rows += [row("R6 trade one day later", sort_ls(asv8, wide(panel, "ret_fwd_r6")))]
     fear = weekly["fear_asv8"].reindex(main_ls.index)
@@ -143,7 +143,7 @@ def main() -> None:
     decision = pd.DataFrame(
         {
             "condition": [
-                "a) net-of-cost NW t > 2 (profitable as specified; |t| of a loss does not count)",
+                "a) net-of-cost NW |t| > 2, applied as t > 2 (see Appendix C)",
                 "b) same sign in >= 2 of 3 sub-periods",
                 "c) alpha against market, momentum, reversal and dollar factors significant (|t| > 2)",
                 "d) break-even cost > 2 x assumed cost",

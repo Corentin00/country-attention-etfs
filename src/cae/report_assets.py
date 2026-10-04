@@ -22,7 +22,7 @@ import pandas as pd
 from cae.config import PROCESSED, ROOT
 from cae.new_info import alpha_regression
 from cae.robustness import costs, placebo
-from cae.stats import nw_mean, summary, wide
+from cae.stats import masked_mean, nw_mean, summary, tercile_membership, wide
 
 REPORT = ROOT / "report"
 RESULTS = REPORT / "results"
@@ -80,7 +80,7 @@ def fig_robustness(rob: pd.DataFrame) -> None:
     ann = r["ann_mean_pct"].to_numpy()
     se = ann / r["nw_t"].to_numpy()
     y = np.arange(len(r))
-    fig, ax = plt.subplots(figsize=(FULL_WIDTH * 0.62, 2.2))
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH * 0.62, 1.9))
     colors = [TERRACOTTA if lbl.startswith("MAIN") else BLUE for lbl in r.index]
     ax.errorbar(ann, y, xerr=1.96 * se, fmt="none", ecolor="gray", lw=0.7, capsize=1.5)
     ax.scatter(ann, y, c=colors, s=10, zorder=3)
@@ -243,6 +243,32 @@ def tab_decision(decision: pd.DataFrame) -> None:
     ]))
 
 
+def tab_horizon(horizon: pd.DataFrame, week0: tuple[float, float]) -> None:
+    """Horizon profile: event-time returns (Figure 1b) and the overlapping
+    Jegadeesh-Titman portfolios of spec 7.4, plus the exploratory week 0."""
+    m0, t0 = week0
+    lines = [f"0 (signal week) & {fmt(m0 * 100, 3)} & ({fmt(t0)}) & & \\\\", "\\midrule"]
+    for k, r in horizon.iterrows():
+        lines.append(
+            f"{k} & {fmt(r['event_week_k_mean_pct'], 3)} & ({fmt(r['event_week_k_t'])}) & "
+            f"{fmt(r['overlap_h_mean_weekly_pct'], 3)} & ({fmt(r['overlap_h_t'])}) \\\\"
+        )
+    write("tab_horizon", "\n".join([
+        "\\begin{tabular}{lrrrr}", "\\toprule",
+        " & \\multicolumn{2}{c}{Event time: week $k$} & \\multicolumn{2}{c}{Overlapping, held $h$ weeks} \\\\",
+        "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}",
+        "$k$ or $h$ & Mean \\% & ($t$) & Mean \\%/wk & ($t$) \\\\", "\\midrule",
+        *lines, "\\bottomrule", "\\end{tabular}",
+    ]))
+
+
+def week0_spread(panel: pd.DataFrame) -> tuple[float, float]:
+    """Exploratory: High-minus-Low return during the signal week itself (not in the spec)."""
+    high, _, low = tercile_membership(wide(panel, "asv8"))
+    r0 = wide(panel, "r1")  # return from the previous rebalance close to this one
+    return nw_mean(masked_mean(r0, high) - masked_mean(r0, low))
+
+
 def spec_appendix(spec_text: str) -> str:
     """Appendix A: the frozen spec, one framed box per section, text unchanged.
 
@@ -334,6 +360,9 @@ def main() -> None:
     tab_loo(loo, dict(zip(universe["ticker"], universe["wiki_title"].str.replace("_", " "), strict=True)))
     tab_universe(universe)
     tab_decision(decision)
+    week0 = week0_spread(panel)
+    tab_horizon(horizon, week0)
+    variations = rob.drop(index=[i for i in rob.index if 'placebo' in i or i.startswith('MAIN')])
 
     g, n = summary(ls), summary(net)
     yearly = ls.groupby(ls.index.year).apply(lambda r: (1 + r).prod() - 1)
@@ -349,7 +378,9 @@ def main() -> None:
         "LSWeekly": fmt(g["mean_weekly_pct"], 3), "LSAnn": fmt(g["ann_mean_pct"], 1), "LSt": fmt(g["nw_t"]),
         "LSSharpe": fmt(g["sharpe_ann"]), "NetAnn": fmt(n["ann_mean_pct"], 1), "Nett": fmt(n["nw_t"]),
         "LSLoss": fmt(-g["ann_mean_pct"], 1), "NetLoss": fmt(-n["ann_mean_pct"], 1),
-        "TurnoverPerSide": f"{cost_info['mean_turnover_per_week'] / 2 * 100:.0f}",
+        # Each side holds $1, so replacing a whole side moves sum|dw| by 2: total max is 4.
+        "TurnoverPerSide": f"{cost_info['mean_turnover_per_week'] / 4 * 100:.0f}",
+        "HoldWeeks": f"{4 / cost_info['mean_turnover_per_week']:.1f}",
         "CostAnn": f"{cost_info['mean_cost_annual_pct']:.1f}",
         "HighAnn": fmt(summary(terciles['High'])["ann_mean_pct"], 1),
         "MiddleAnn": fmt(summary(terciles['Middle'])["ann_mean_pct"], 1),
@@ -365,8 +396,9 @@ def main() -> None:
         **{f"Prem{name}": fmt(nw_mean(factors[name])[0] * 100, 3) for name in factors},
         **{f"Prem{name}t": fmt(nw_mean(factors[name])[1]) for name in factors},
         "LOOtMin": fmt(loo["nw_t"].min()), "LOOtMax": fmt(loo["nw_t"].max()),
-        "RobNegative": str(int((rob.drop(index=[i for i in rob.index if 'placebo' in i])['mean_weekly_pct'] < 0).sum())),
-        "RobTotal": str(len(rob) - 1),
+        "RobNegative": str(int((variations["mean_weekly_pct"] < 0).sum())),
+        "RobTotal": str(len(variations)),
+        "WeekZero": fmt(week0[0] * 100, 3), "WeekZerot": fmt(week0[1]),
         "LossTwentyTwo": fmt(-yearly.loc[2022] * 100, 1), "LossTwentyThree": fmt(-yearly.loc[2023] * 100, 1),
         "TroughDate": f"{trough:%B %Y}",
         "TurnoverTotal": f"{turnover:.2f}", "CostMultiplier": f"{turnover * 52:.0f}",
